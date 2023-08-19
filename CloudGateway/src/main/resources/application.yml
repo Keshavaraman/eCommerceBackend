@@ -1,0 +1,50 @@
+server:
+  port: 9090
+
+spring:
+  application:
+    name: API-GATEWAY
+  config:
+    import: configserver:http://localhost:9296
+  cloud:
+    gateway:
+      routes:
+        - id: Order-Service
+          uri: lb://Order-Service
+          predicates:
+            - path=/order/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: Order-Service
+                fallbackuri: forward:/orderServiceFallBack
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 1
+                redis-rate-limiter/burstCapacity: 1
+        - id: Product-Service
+          uri: lb://Product-Service
+          predicates:
+            - path=/product/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: Product-Service
+                fallbackuri: forward:/productServiceFallBack
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 1
+                redis-rate-limiter/burstCapacity: 1
+        - id: Payment-Service
+          uri: lb://Payment-Service
+          predicates:
+            - path=/payment/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: Payment-Service
+                fallbackuri: forward:/paymentServiceFallBack
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 1
+                redis-rate-limiter/burstCapacity: 1

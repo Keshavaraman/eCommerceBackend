@@ -1,0 +1,16 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: Product-Service
+  config:
+    import: configserver:http://localhost:9296
+  datasource:
+    url: jdbc:mysql://localhost:3006/productdb
+    username: root
+    password: Keshava@99
+    driverClassName: com.mysql.cj.jdbc.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL57InnoDBDialect
+    hibernate:
+      ddl-auto: update
